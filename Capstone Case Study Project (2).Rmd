@@ -1,0 +1,192 @@
+---
+title: "Bellabeat Case Study"
+author: "Jay"
+date: '2022-12-29'
+output: html_document
+---
+## Introduction and background
+
+Welcome to the Bellabeat data analysis case study! In this case study, you will perform many real-world tasks. Bellabeat, a high-tech manufacturer of health-focused products for women
+
+## Upload your CSV files to R
+
+Remember to upload your CSV files to your project from the relevant data source:
+[link](https://www.kaggle.com/arashnic/fitbit)
+
+Remember, there are many different CSV files in the dataset. We have uploaded five CSVs into the project.
+
+
+## Installing and loading common packages and libraries
+
+You can always install and load packages along the way as you may discover you need different packages after you start your analysis.
+You can install and load packages now, if nother packages needed further, you can do that with specific lines of code anyway.
+
+```{r}
+install.packages("tidyverse")
+
+library(tidyverse)
+
+install.packages("ggplot2")
+
+library(ggplot2)
+
+install.packages("tidyr")
+
+library(tidyr)
+```
+
+## Loading your CSV files
+
+Here we'll create a dataframe named 'daily_activity' and read in one of the CSV files from the dataset. Remember, you can name your dataframe something different, and you can also save your CSV file under a different name as well.
+
+```{r}
+daily_activity <- read_csv("dailyActivity_merged.csv")
+```
+
+We will create dataframes and read CSV files for remaining datasets step-by-step.
+
+```{r}
+sleep_day <- read_csv("sleepDay_merged.csv")
+
+daily_calories <- read_csv("dailyCalories_merged.csv")
+
+daily_intensities <- read_csv("dailyIntensities_merged.csv")
+
+daily_steps <- read_csv("dailySteps_merged.csv")
+```
+
+## Viewing daily_activity data with head() and colnames() function
+
+Exploring key data tables and getting an overview of what table contents. Currently we are exploring daily_activity table
+
+```{r}
+head(daily_activity)
+```
+
+Take a loot at all the columns of daily_activity data
+
+```{r}
+colnames(daily_activity)
+```
+
+## Viewing sleep_day data with head() and colnames() functions
+
+Exploring sleep_day table 
+
+```{r}
+head(sleep_day)
+```
+
+Take a look at all the columns of sleep_day data
+
+```{r}
+colnames(sleep_day)
+```
+
+## Identiifying duplicate rows in a dataframe
+
+Installing and loading required packages.
+
+```{r}
+install.packages("lubridate")
+
+library(lubridate)
+```
+
+How many unique participants are there in each dataframe?
+
+```{r}
+n_distinct(daily_activity$Id)
+
+n_distinct(sleep_day$Id)
+```
+It looks like there are more participants in the daily activity dataset than the sleep dataset.
+
+
+How many observations are there in each dataframe?
+
+```{r}
+nrow(daily_activity)
+
+nrow(sleep_day)
+```
+
+## Applying summary() function to dataframe
+
+For the daily_activity dataframe:
+
+```{r}
+daily_activity %>% 
+  select(TotalSteps, TotalDistance, SedentaryMinutes, Calories) %>% 
+  summary()
+```
+
+For the sleep_day dataframe:
+
+```{r}
+sleep_day %>% 
+  select(TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed) %>% 
+  summary()
+```
+
+## Data visualization with ggplot2
+
+What's the relationship between steps taken in a day and sedentary minutes?
+
+Adding title to the plot
+```{r}
+ggplot(data = daily_activity) +
+  geom_point(mapping = aes(x = TotalSteps, y = Calories)) + 
+  geom_smooth(mapping = aes(x = TotalSteps, y = Calories)) +
+  labs(title = "TotalSteps vs. Calories")
+```
+
+`geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+There is a  positive correlation between Total Steps and Calories, which is obvious - the more active we are, the more calories we burn. Setting up reward system in app will make more users to participate in such exercises to stay fit with Bellabeat everyday.
+
+
+Calling back the summary() function to recollect the data
+
+```{r}
+sleep_day %>%
+  select(TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed) %>% 
+  summary()
+```
+
+What's the relationship between minutes asleep and time in bed?
+
+```{r}
+ggplot(data = sleep_day) +
+  geom_point(mapping = aes(x = TotalMinutesAsleep, y = TotalTimeInBed)) +
+  geom_smooth(mapping = aes(x = TotalMinutesAsleep, y = TotalTimeInBed)) +
+  labs(title = "TotalMinutesAsleep vs. TotalTimeInBed")
+```
+
+It seems if the Bellabeat users want to improve their sleep, we should consider using notification to go to sleep or get up from bed quickly after waking up. This will remind them to use their time wisely.
+
+## Applying summary() function to daily_intensities
+
+We will now go through daily intensities dataset to find some relationship.
+
+```{r}
+daily_intensities %>% 
+  select(LightlyActiveMinutes, FairlyActiveMinutes, VeryActiveMinutes,
+         LightActiveDistance, ModeratelyActiveDistance, 
+         VeryActiveDistance) %>% 
+  summary()
+```
+
+What's the relationship between active minutes and active distance?
+
+There is a positive relationship between lightly active minutes and lightly active distance. Users who spend less time in daily activities, Bellabeat app can encourage them to setup target for those users and can reward them points on completing the exercise. This will improve the engagement between the users and the Bellabeat company.
+```{r}
+ggplot(data = daily_intensities) +
+  geom_point(mapping = aes(x = LightlyActiveMinutes,
+                           y = LightActiveDistance)) +
+  geom_smooth(mapping = aes(x = LightlyActiveMinutes,
+                            y = LightActiveDistance)) +
+  labs(title = "LightlyActiveMinutes vs. LightActiveDistance")
+```
+
+
